@@ -13,7 +13,7 @@
 void DisplayMenu();
 void Highlight(int,int);
 
-void Game1();
+void Game1(int);
 void Game2();
 void Game3();
 void stopgame(int,char*);
@@ -31,7 +31,7 @@ int main()
     return 0;
 }
 
-void changepos(int x,int y)
+void chgcursorpos(int x,int y)
 {
     pos.X=x;
     pos.Y=y;
@@ -50,7 +50,7 @@ void DisplayMenu()
         menu[2]= "  Game 3 ";
         menu[3]= "  Exit";
         totalchoice=4;
-        changepos(0,1);
+        chgcursorpos(0,1);
         printf("*********** Main Menu ***********");
     }
     else if(currentwindow == -1)
@@ -58,19 +58,19 @@ void DisplayMenu()
         menu[0]= "   Play Again ";
         menu[1]= "   Main Menu ";
         totalchoice=2;
-        changepos(0,1);
+        chgcursorpos(0,1);
         printf("*********** Game Over ***********");
     }
     for (int i=0; i<totalchoice; i++)
     {
-        changepos(5,3+i);
+        chgcursorpos(5,3+i);
         printf("%s\n\n\n",menu[i]);
     }
     
     
     int selectedchioce=1;
     char ch='0';
-    changepos(5,3);
+    chgcursorpos(5,3);
     while(1)
     {
         switch(ch)
@@ -91,7 +91,7 @@ void DisplayMenu()
             system("cls");
            if(currentwindow == 0)
             {
-                if (selectedchioce==1) Game1();
+                if (selectedchioce==1) Game1(0);
                 else if(selectedchioce==2) Game2();
                 else if(selectedchioce==3) Game3();
                 else   exit(0);
@@ -100,7 +100,7 @@ void DisplayMenu()
             {   
                 if (selectedchioce==1)
                 {
-                    if (lastgame == 1) Game1();
+                    if (lastgame == 1) Game1(0);
                     else if (lastgame == 2) Game2();
                     else if (lastgame == 3) Game3();
                 }
@@ -121,49 +121,49 @@ void Highlight(int count, int totalchoice)
 {
     if(totalchoice == 4)
     {
-        changepos (5,3);
+        chgcursorpos (5,3);
         printf("   Game 1 ");
-        changepos (5,4);
+        chgcursorpos (5,4);
         printf("   Game 2 ");
-        changepos (5,5);
+        chgcursorpos (5,5);
         printf("   Game 3 ");
-        changepos (5,6);
+        chgcursorpos (5,6);
         printf("   Exit        ");
         switch(count)
         {
         case 1:
-            changepos (5,3);
+            chgcursorpos (5,3);
             printf("- Game 1 ");
             break;
         case 2:
-            changepos (5,4);
+            chgcursorpos (5,4);
             printf("- Game 2 ");
             break;
         case 3:
-            changepos (5,5);
+            chgcursorpos (5,5);
             printf("- Game 3 ");
             break;
         case 4:
-            changepos (5,6);
+            chgcursorpos (5,6);
             printf("- Exit ");
             break;
         }
     }
     else if(totalchoice == 2)
     {
-        changepos (5,3);
+        chgcursorpos (5,3);
         printf("   Play Again ");
-        changepos (5,4);
+        chgcursorpos (5,4);
         printf("   Main Menu ");
     
         switch(count)
         {
         case 1:
-            changepos (5,3);
+            chgcursorpos (5,3);
             printf("- Play Again ");
             break;
         case 2:
-            changepos (5,4);
+            chgcursorpos (5,4);
             printf("- Main Menu ");
             break;
         }
@@ -177,7 +177,7 @@ void Highlight(int count, int totalchoice)
 // ============================= GAME ======================================
 void stopgame(int lgame,char* status)
 {   
-    changepos(0,0);
+    chgcursorpos(0,0);
     printf("- - - YOU %s - - -",status);
     lastgame = lgame;
     if(getch() == '\r')
@@ -188,17 +188,92 @@ void stopgame(int lgame,char* status)
 }
 
 
-void Game1()
+void Game1(int wincount)
 {
     currentwindow = 1;
 
     // Add game 1 here vvvvv
-    changepos(0,1);
-	printf("Playing 1'st game.\n\n\n");
+    char* choice[] = {
+        "Fried chicken with Sticky rice",
+        "Icecream",
+        "Apple",
+        "Grilled Pork with Sticky Rice",
+        "Corn soup",
+        "Orange juice"
+    };
+    int price[] = {15,5,10,20,10,15};
+    char* choosenfood[] = {"","",""};
+    int checklist[] = {0,0,0};
+    int choosencount = 0;
+    int selecting = 0;
+    char ch = '0';
+    chgcursorpos(0,1);
+	printf("Choose 3 of these product to find all conditions that will cause the total price to not exceed than 35 baht.");
+    chgcursorpos(1,10);
+    printf("You Chosen : None");
+    chgcursorpos(1,11);
+    printf("Found condition : %d",wincount);
+    while(1)
+    {
+        switch(ch)
+        {
+        case 80:
+            selecting++;
+            if (selecting > 5) selecting=0;
+            break;
+        case 72:
+            selecting--;
+            if(selecting < 0) selecting=5;
+            break;
+        }
+        
+        for(int i=0;i<6;i++){
+            chgcursorpos(5,3+i);
+            printf("   %s",choice[i]);
+        }
+        for(int i=0;i<6;i++){ 
+            if(price[i] != 0)
+            {
+                chgcursorpos(43,3+i);
+                printf("%d",price[i]);
+                chgcursorpos(46,3+i);
+                printf("Bath.");
+            }
+        }
 
+        chgcursorpos(5,3+selecting);
+        printf("- %s ",choice[selecting]);
+
+        ch=getch();
+        if(ch=='\r')
+        {
+            if(choice[selecting] != "")
+            {
+                choosenfood[choosencount] = choice[selecting];
+                checklist[choosencount] = selecting;
+                choosencount++;
+                choice[selecting] = "";
+                printf("%c[2K",27);
+                chgcursorpos(1,10);
+                printf("%c[2KYou Chosen : ",27);
+                for(int i=0 ; i<3;i++){
+                    if(choosenfood[i] != "") printf("%s    ",choosenfood[i]);
+                }
+            }
+        }
+        if(choosencount >= 3) break;
+    }
+    
+    const int wincondition[][] = {
+        {0,1,2},
+        {0,1,5},
+        {0,4,5},
+        {1,2,3}
+    };
+    
     // Add game 1 here ^^^^^
 
-    stopgame(1,"WIN");
+    //stopgame(1,"WIN");
 }
 
 
@@ -207,7 +282,7 @@ void Game2()
     currentwindow = 2;
 
     // Add game 2 here vvvvv
-    changepos(0,1);
+    chgcursorpos(0,1);
 	printf("Playing 2'nd game.\n\n\n");
     
     // Add game 2 here ^^^^^
@@ -221,7 +296,7 @@ void Game3()
     currentwindow = 3;
 
     // Add game 3 here vvvvv
-    changepos(0,1);
+    chgcursorpos(0,1);
 	printf("Playing 3'rd game.\n\n\n");
     
     // Add game 3 here ^^^^^
