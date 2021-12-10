@@ -13,7 +13,7 @@
 void DisplayMenu();
 void Highlight(int,int);
 
-void Game1(int);
+void Game1(int,int[]);
 void Game2();
 void Game3();
 void stopgame(int,char*);
@@ -89,9 +89,10 @@ void DisplayMenu()
         if(ch=='\r')
         {
             system("cls");
+            int conditionlist[4] ={-1,-1,-1,-1};
            if(currentwindow == 0)
             {
-                if (selectedchioce==1) Game1(0);
+                if (selectedchioce==1) Game1(0,conditionlist);
                 else if(selectedchioce==2) Game2();
                 else if(selectedchioce==3) Game3();
                 else   exit(0);
@@ -100,7 +101,7 @@ void DisplayMenu()
             {   
                 if (selectedchioce==1)
                 {
-                    if (lastgame == 1) Game1(0);
+                    if (lastgame == 1) Game1(0,conditionlist);
                     else if (lastgame == 2) Game2();
                     else if (lastgame == 3) Game3();
                 }
@@ -177,19 +178,19 @@ void Highlight(int count, int totalchoice)
 // ============================= GAME ======================================
 void stopgame(int lgame,char* status)
 {   
+    system("cls");
     chgcursorpos(0,0);
-    printf("- - - YOU %s - - -",status);
+    printf("- - - YOU %s - - -\nPress (Any) key to back to main menu.\n",status);
     lastgame = lgame;
-    if(getch() == '\r')
-    {
-        currentwindow = -1;
-        DisplayMenu();
-    }
+    getch();
+    currentwindow = -1;
+    DisplayMenu();
 }
 
 
-void Game1(int wincount)
+void Game1(int wincount, int conditionlist[4])
 {
+    system("cls");
     currentwindow = 1;
 
     // Add game 1 here vvvvv
@@ -203,7 +204,7 @@ void Game1(int wincount)
     };
     int price[] = {15,5,10,20,10,15};
     char* choosenfood[] = {"","",""};
-    int checklist[] = {0,0,0};
+    int checklist[3];
     int choosencount = 0;
     int selecting = 0;
     char ch = '0';
@@ -264,13 +265,89 @@ void Game1(int wincount)
         if(choosencount >= 3) break;
     }
     
-    const int wincondition[][] = {
+    const int wincondition[4][3] = {
         {0,1,2},
         {0,1,5},
-        {0,4,5},
+        {0,2,4},
         {1,2,3}
     };
+
+    for (int i = 0; i < 3; i++) 
+    {     
+        for (int j = i+1; j < 3; j++) 
+        {     
+           if(checklist[i] > checklist[j]) 
+           {    
+               int temp = checklist[i];    
+               checklist[i] = checklist[j];    
+               checklist[j] = temp;    
+           }     
+        }     
+    }
+
+    int answer;
     
+    for(int i=0;i<4;i++)
+    {
+        if(wincondition[i][0]==checklist[0] && wincondition[i][1]==checklist[1] && wincondition[i][2]==checklist[2]){
+            answer = 1;
+            for(int w=0; w<4 ;w++)
+            {
+                if(conditionlist[w] == i)
+                {
+                    system("cls");
+                    printf("You have already choose this. \nPress (Any) key to try again.\n");
+                    getch();
+                    Game1(wincount,conditionlist);
+                }
+                else if(conditionlist[w] == -1)
+                {
+                    wincount++;
+                    conditionlist[w] = i;
+                    break;
+                }
+            }
+            break;
+        }
+        else answer=0;
+    }
+    if(answer)
+    {
+        if(wincount != 4 && conditionlist[3] == -1){
+            system("cls");
+            printf("Successe choose another.\nPress (Any) key to continue.\n");
+            getch();
+            Game1(wincount,conditionlist);
+        }
+        else
+        {
+            for (int i = 0; i < 4; i++) 
+            {     
+                for (int j = i+1; j < 4; j++) 
+                {     
+                    if(conditionlist[i] > conditionlist[j]) 
+                    {    
+                        int temp = conditionlist[i];    
+                        conditionlist[i] = conditionlist[j];    
+                        conditionlist[j] = temp;    
+                    }     
+                }     
+            }
+
+            if(conditionlist[0] == 0 && conditionlist[1] == 1 && conditionlist[2] == 2 && conditionlist[3] == 3)
+            {
+                stopgame(1,"Win");
+                Game1(wincount,conditionlist);
+            }
+        }
+    }
+    else 
+    {
+        system("cls");
+        printf("Wrong decision.\nPress (Any) key to try again.\n");
+        getch();
+        Game1(wincount,conditionlist);
+    }
     // Add game 1 here ^^^^^
 
     //stopgame(1,"WIN");
@@ -282,12 +359,10 @@ void Game2()
     currentwindow = 2;
 
     // Add game 2 here vvvvv
-    chgcursorpos(0,1);
-	printf("Playing 2'nd game.\n\n\n");
-    
+        //////////////////////////////////  TODO GAME2
     // Add game 2 here ^^^^^
 
-    stopgame(2,"WIN");
+    stopgame(2,"haven't created this game yet.");
 }
 
 
@@ -296,11 +371,9 @@ void Game3()
     currentwindow = 3;
 
     // Add game 3 here vvvvv
-    chgcursorpos(0,1);
-	printf("Playing 3'rd game.\n\n\n");
-    
+            //////////////////////////////////  TODO GAME3
     // Add game 3 here ^^^^^
 
-    stopgame(3,"WIN");
+    stopgame(3,"haven't created this game yet.");
 }
 // ========= EOC =============== GAME ============== EOC ===================
